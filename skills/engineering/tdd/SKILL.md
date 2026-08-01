@@ -25,6 +25,19 @@ Ask: "What's the public interface, and which seams should we test?"
 
 When the shape of that interface is itself in question (how deep the module is, where the seam belongs, what the interface should expose), call the Skill tool with "codebase-design" for the vocabulary. It is the shared source of the module, interface, depth, seam, adapter, leverage and locality terms, and it is a reference to consult, not a session to run.
 
+## Test-case review gate — user approves test cases before any test is written
+
+Once the seams are agreed and **before writing the first test**, present the test plan to the user and wait for approval. Tests that are designed to pass are worse than no tests — this gate is how the user catches weak, tautological, or missing cases before they calcify into the suite.
+
+Present, per seam:
+
+1. **Functionality under test** — a plain-language explanation of what the code at this seam is supposed to do, so the user can review test cases against intent, not against code they haven't seen.
+2. **Proposed test cases** — one line each: the behavior being verified and the expected outcome (e.g. "set_config with an unknown key → error response, nothing persisted"). Cover both unit and e2e seams, happy path and the failure modes that matter.
+
+Then ask the user to approve or edit the list (use the question tool). **No test file is written before the user approves the plan.** If the user edits cases, their version wins.
+
+During the loop, small tracer tests that follow from an approved case need no re-approval — but a genuinely new behavior or failure mode discovered mid-loop goes back to the user as a proposed addition, not silently into the suite.
+
 ## Anti-patterns
 
 - **Implementation-coupled**: mocks internal collaborators, tests private methods, or verifies through a side channel (querying the database instead of using the interface). The tell: the test breaks when you refactor but behavior hasn't changed.
